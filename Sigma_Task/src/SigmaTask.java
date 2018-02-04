@@ -44,7 +44,7 @@ public class SigmaTask {
         /* Creating the dictionary by using the given text */
         /* Simple dictionary at first */
         simpleDict = TextManager.MakeItAsDictionary(sourceText, 
-                "[\\s\\n,.:;!?\\[\\]\\(\\)—_/*\\-]", "\n");
+                "[\\s\\n,.:;!?\\[\\]\\(\\)—_/*\\-]", delimiter);
          
         /* Tree-dictionary making */
         startTime = System.currentTimeMillis();
