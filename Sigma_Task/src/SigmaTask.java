@@ -13,7 +13,8 @@ package sigmatask;
 import java.io.*;
 
 /**
- * Described class SigmaTask consist of main script of solving task demonstration.
+ * Described class SigmaTask consist of main script 
+ * for solving task demonstration.
  */
 public class SigmaTask {
     
@@ -27,45 +28,40 @@ public class SigmaTask {
         String sourceText;
         String unspacedText;    //without any spaces and punctuation
         String resText;         //with restored spaces
-        long elapsedTime;   //Time marks
+        long elapsedTime;       //Time marks
         long startTime;     
-    
-        /*Attention! The correct way to .txt-file should be specified here*/
-        sourceText=TextManager.hDDLoadTxt("War_nPeace.txt");
+        String simpleDict;  //Dictionary as string with delimiters
+        String delimiter = "\n";
+
+        String html = TextManager.libRu_GetHTML(
+                "http://az.lib.ru/t/tolstoj_lew_nikolaewich/text_0040.shtml");
+        sourceText = TextManager.libRu_ParseHTML(html);
+        //System.out.print(sourceText);
         
-        /*Also you can use overloaded method to specify file encoding*/
-        //sourceText=TextManager.hDDLoadTxt("War_nPeace1.txt", "unicode");
-        //System.out.println("Source text:\n"+sourceText);
-
-        /*Creating the dictionary by using the given text*/
+        /* Loading from hardware case*/
+        //sourceText=TextManager.hDDLoadTxt("War_nPeace.txt");
+       
+        /* Creating the dictionary by using the given text */
+        /* Simple dictionary at first */
+        simpleDict = TextManager.MakeItAsDictionary(sourceText, 
+                "[\\s\\n,.:;!?\\[\\]\\(\\)—_/*\\-]", "\n");
+         
+        /* Tree-dictionary making */
         startTime = System.currentTimeMillis();
-        TreeDict_Cyr ru_dct = new TreeDict_Cyr(sourceText);
-        elapsedTime = System.currentTimeMillis()-startTime;
-        System.out.print("Elapsed Time :"+elapsedTime+" ms\n");
-
-        //ru_dct.showDict();    //Printing all words from dictionary
+        TreeDictionary tDict = new TreeDictionary(simpleDict, delimiter);
+        elapsedTime = System.currentTimeMillis() - startTime;
+        System.out.print("Elapsed Time :" + elapsedTime + " ms\n");
+        //tDict.showDict();    //Printing all words from dictionary
         
         /*Preparing of text without spacing and punctuation*/
-        //unspacedText=sourceText.toLowerCase();    
-        //unspacedText=unspacedText.replaceAll("[^а-я^ё^a-z^0-9^]", ""); 
-        unspacedText=sourceText.replaceAll("[^А-Я^а-я^ё^Ё^A-Z^a-z^0-9^]", ""); 
-        System.out.println("Text without delimiters:\n"+unspacedText);
-        
+        unspacedText = sourceText.replaceAll("[ ,.:;!?—_/]", "");
+                
         /*Restoring whitespaces by alphabetical-sorted dictionary*/
-        ru_dct.sortByDemand();
         startTime = System.currentTimeMillis();
-        resText=ru_dct.spaceRestore_Fast(unspacedText);
-        elapsedTime = System.currentTimeMillis()-startTime;
-        System.out.print("Elapsed Time :"+elapsedTime+" ms\n");
-        //System.out.println("Restored text:\n"+resText);
-        
-        /*Restoring whitespaces by dictionary with demand sorting*/
-        ru_dct.sortByDemand();
-        startTime = System.currentTimeMillis();
-        resText=ru_dct.spaceRestore_Fast(unspacedText);
-        elapsedTime = System.currentTimeMillis()-startTime;
-        System.out.print("Elapsed Time :"+elapsedTime+" ms\n");
-        //System.out.println("Restored text:\n"+resText);
-    
+        resText = tDict.spaceRestore_Fast(unspacedText);  
+        elapsedTime = System.currentTimeMillis() - startTime;
+        System.out.print("Elapsed Time :" + elapsedTime + " ms\n");
+        System.out.println("Restored text:\n"+resText);
+
     }
 }
